@@ -1,0 +1,6 @@
+streamlit
+langchain
+langchain-experimental
+langchain-google-genai
+pandas
+gspread
