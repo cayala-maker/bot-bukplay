@@ -4,3 +4,4 @@ langchain-experimental
 langchain-google-genai
 pandas
 gspread
+tabulate
