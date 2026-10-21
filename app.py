@@ -25,20 +25,14 @@ with st.spinner("Conectando con la base de datos..."):
 # 3. Inicializar el cerebro de la IA
 llm = ChatGoogleGenerativeAI(model="gemini-3.8-flash", temperature=0)
 
-# Instrucción estricta para evitar errores de parsing
-PREFIX = """
-Eres un analista experto en datos de SST. 
-SIEMPRE debes responder en español y usando el formato ReAct.
-Cuando tengas la respuesta final, DEBES escribir 'Final Answer:' antes de tu respuesta.
-"""
-
+# Usamos agent_type="tool-calling" para evitar los errores de ReAct Parser
 agente = create_pandas_dataframe_agent(
     llm, 
     df_sst, 
     verbose=False, 
     allow_dangerous_code=True, 
     handle_parsing_errors=True,
-    prefix=PREFIX
+    agent_type="tool-calling"
 )
 
 # 4. Historial del Chat
@@ -59,8 +53,7 @@ if pregunta:
             respuesta = agente.invoke(pregunta)
             texto_respuesta = respuesta["output"]
         except Exception as e:
-            # Si falla, mostramos el error exacto para saber qué corregir
-            texto_respuesta = f"Error técnico: {str(e)}"
+            texto_respuesta = f"Uy, ocurrió un detalle técnico: {str(e)}"
             
     st.chat_message("assistant").write(texto_respuesta)
     st.session_state.mensajes.append({"role": "assistant", "content": texto_respuesta})
